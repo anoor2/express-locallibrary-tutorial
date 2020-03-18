@@ -1,21 +1,24 @@
-const mongoose = require('mongoose')
+var mongoose = require('mongoose');
 
-const Schema = mongoose.Schema
+var Schema = mongoose.Schema;
 
-const bookSchema = new Schema({
-    title : {type: String ,required: true},
-    author : {type: Schema.Types.ObjectId, ref: 'Author',required: true},
-    summary : {type: String,required: true},
-    isbn : {type: String,required: true},
-    genre : [{type: Schema.Types.ObjectId, ref: 'Genre'}]
-})
+var BookSchema = new Schema(
+  {
+    title: {type: String, required: true},
+    author: {type: Schema.Types.ObjectId, ref: 'Author', required: true},
+    summary: {type: String, required: true},
+    isbn: {type: String, required: true},
+    genre: [{type: Schema.Types.ObjectId, ref: 'Genre'}]
+  }
+);
 
 // Virtual for book's URL
-bookSchema
+BookSchema
 .virtual('url')
-.get(function(){
-    return '/catalog/book/' + this._id
-})
+.get(function () {
+  return '/catalog/book/' + this._id;
+});
 
-module.exports = mongoose.model('Book', bookSchema)
+//Export model
+module.exports = mongoose.model('Book', BookSchema);
 
