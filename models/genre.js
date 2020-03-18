@@ -1,16 +1,10 @@
-const mongoose = require('mongoose')
+var express = require('express');
+var router = express.Router();
 
-const Schema = mongoose.Schema
+/* GET user listing. */ 
 
-const genreSchema = new Schema({
-    name : {type: String, /*required: true,*/ min: 3, max: 100}
-})
+router.get('/cool', function(req, res, next){
+    res.send("You're so cool");
+});    
 
-// Virtual URL
-genreSchema
-.virtual('url')
-.get(function(){
-    return '/catalog/genre/' + this._id
-})
-
-module.exports = mongoose.model('Genre', genreSchema)
+module.exports = router;
