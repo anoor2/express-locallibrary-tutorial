@@ -1,35 +1,48 @@
-const mongoose = require('mongoose')
+var mongoose = require('mongoose');
 
-const Schema = mongoose.Schema
+var Schema = mongoose.Schema;
 
-const authorSchema = new Schema({
-    firstName : {type: String, required: true, max:100},
-    familyName : {type: String, required: true, max:100},
-    dateOfBirth : {type: Date},
-    dateOfDeath : {type: Date}
-})
+var AuthorSchema = new Schema(
+  {
+    first_name: {type: String, required: true, max: 100},
+    family_name: {type: String, required: true, max: 100},
+    date_of_birth: {type: Date},
+    date_of_death: {type: Date},
+  }
+);
 
 // Virtual for author's full name
-authorSchema
+AuthorSchema
 .virtual('name')
-.get(function(){
-    return this.familyName + ', ' + this.firstName
-})
+.get(function () {
+
+// To avoid errors in cases where an author does not have either a family name or first name
+// We want to make sure we handle the exception by returning an empty string for that case
+
+  var fullname = '';
+  if (this.first_name && this.family_name) {
+    fullname = this.family_name + ', ' + this.first_name
+  }
+  if (!this.first_name || !this.family_name) {
+    fullname = '';
+  }
+
+  return fullname;
+});
 
 // Virtual for author's lifespan
-authorSchema
+AuthorSchema
 .virtual('lifespan')
-.get(function(){
-    if(this.dateOfBirth === undefined || this.dateOfDeath === undefined) return 'Unknown'
-    if(this.dateOfBirth === null || this.dateOfDeath === null) return 'Unknown'
-    return (this.dateOfDeath.getYear() - this.dateOfBirth.getYear()).toString()
-})
+.get(function () {
+  return (this.date_of_death.getYear() - this.date_of_birth.getYear()).toString();
+});
 
 // Virtual for author's URL
-authorSchema
+AuthorSchema
 .virtual('url')
-.get(function(){
-    return '/catalog/author/' + this._id
-})
+.get(function () {
+  return '/catalog/author/' + this._id;
+});
 
-module.exports = mongoose.model('Author', authorSchema)
+//Export model
+module.exports = mongoose.model('Author', AuthorSchema);
